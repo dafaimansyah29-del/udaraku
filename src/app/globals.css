@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    @apply bg-abu font-sans text-navy antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading;
+  }
+
+  /*
+   * Fokus keyboard dua warna: cincin putih di dalam + biru #2F4BC4 di luar.
+   * Terlihat jelas di latar putih (biru 6,6:1) maupun latar navy gelap (putih), kontras ≥ 3:1 (WCAG 2.2).
+   */
+  :focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 0;
+    box-shadow: 0 0 0 5px #2f4bc4;
+  }
+}
+
+@layer components {
+  /* Tautan "Lewati ke konten utama": hanya terlihat saat difokus dengan keyboard */
+  .skip-link {
+    position: fixed;
+    left: 1rem;
+    top: -5rem;
+    z-index: 100;
+    border-radius: 9999px;
+    background: #0b1e5b;
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    transition: top 0.15s;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+/* Banner peringatan (tetap di atas): navbar dan isi halaman turun sebesar tinggi banner */
+html[data-alert] body {
+  padding-top: var(--alert-h, 0px);
+}
+html[data-alert] .site-nav {
+  top: calc(var(--alert-h, 0px) + 0.75rem);
+}
+@media (min-width: 640px) {
+  html[data-alert] .site-nav {
+    top: calc(var(--alert-h, 0px) + 1.25rem);
+  }
+}
+html {
+  scroll-padding-top: calc(var(--alert-h, 0px) + 5rem);
+}
+
+/* Penanda lokasi di peta (Leaflet divIcon): bulat bercahaya + cincin berdenyut */
+.udaraku-pin {
+  background: transparent;
+  border: 0;
+}
+.udaraku-pin .pin-core {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+  font: 800 14px/1 var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  box-shadow:
+    0 0 0 6px rgba(255, 255, 255, 0.12),
+    0 0 28px 4px var(--pin, rgba(34, 211, 238, 0.6)),
+    0 8px 20px rgba(0, 0, 0, 0.5);
+}
+.udaraku-pin .pin-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: var(--pin, rgba(34, 211, 238, 0.6));
+  opacity: 0.55;
+  animation: udaraku-pulse 2.4s ease-out infinite;
+}
+@keyframes udaraku-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .udaraku-pin .pin-pulse {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Peta bergaya gelap, selaras dengan situs */
+div.leaflet-container {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  background: #050b1f;
+  outline-offset: 2px;
+}
+.leaflet-container .leaflet-tile-pane {
+  /* Ubah peta terang OSM menjadi duotone navy: daratan gelap, laut dan jalan kebiruan */
+  filter: invert(1) grayscale(1) sepia(1) hue-rotate(175deg) saturate(2.6) brightness(1.35) contrast(1.1);
+}
+.leaflet-container .leaflet-popup-content-wrapper,
+.leaflet-container .leaflet-popup-tip {
+  background: rgba(8, 18, 56, 0.92);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), 0 0 40px -12px rgba(34, 211, 238, 0.35);
+  backdrop-filter: blur(8px);
+}
+.leaflet-container .leaflet-popup-content-wrapper {
+  border-radius: 20px;
+}
+.leaflet-container .leaflet-popup-content {
+  margin: 14px 16px;
+  color: #fff;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  color: rgba(255, 255, 255, 0.85);
+  width: 28px;
+  height: 28px;
+  font-size: 20px;
+  line-height: 28px;
+}
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #22d3ee;
+}
+.leaflet-container .leaflet-bar {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6) !important;
+}
+.leaflet-container .leaflet-bar a,
+.leaflet-container .leaflet-bar a:hover {
+  background: rgba(8, 18, 56, 0.9);
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+}
+.leaflet-container .leaflet-bar a:hover {
+  background: #22d3ee;
+  color: #010308;
+}
+.leaflet-container .leaflet-control-attribution {
+  background: rgba(1, 3, 8, 0.7) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  border-top-left-radius: 10px;
+  backdrop-filter: blur(4px);
+}
+.leaflet-container .leaflet-control-attribution a {
+  color: #67e8f9 !important;
+}
+.leaflet-container .leaflet-popup-content p {
+  margin: 0;
+}
+.leaflet-container .leaflet-popup-content p + p {
+  margin-top: 4px;
+}

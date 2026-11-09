@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0B1E5B">
+  <title>Kamu sedang offline — UdaraKu</title>
+  <style>
+    *{box-sizing:border-box;margin:0}
+    body{min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;
+      background:linear-gradient(135deg,#050F33 0%,#0B1E5B 45%,#16278A 100%)}
+    main{width:100%;max-width:460px;text-align:center}
+    .logo{font-size:28px;font-weight:800;letter-spacing:-.5px}.logo b{color:#22D3EE}
+    h1{margin-top:28px;font-size:28px;line-height:1.2;font-weight:800}
+    p{margin-top:12px;line-height:1.6;color:rgba(255,255,255,.85)}
+    .card{margin-top:24px;padding:18px 20px;border-radius:24px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);text-align:left}
+    .card[hidden]{display:none}
+    .card small{display:block;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:rgba(255,255,255,.75)}
+    .card strong{display:block;margin-top:4px;font-size:30px;line-height:1.1}
+    .card span{display:block;margin-top:6px;font-size:14px;color:rgba(255,255,255,.85)}
+    .row{margin-top:28px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    a,button{font:inherit;font-weight:700;border-radius:999px;padding:12px 26px;border:2px solid #fff;cursor:pointer;text-decoration:none}
+    button{background:#2F4BC4;color:#fff;border-color:#2F4BC4}
+    a{background:transparent;color:#fff}
+    :focus-visible{outline:3px solid #22D3EE;outline-offset:3px}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="logo">Udara<b>Ku</b></div>
+    <h1>Kamu sedang offline</h1>
+    <p>Halaman ini belum tersimpan di perangkatmu. Sambungkan internet, lalu coba lagi.</p>
+    <div class="card" id="kartu" hidden aria-live="polite">
+      <small>Data offline</small>
+      <strong id="pm"></strong>
+      <span id="info"></span>
+    </div>
+    <div class="row">
+      <button type="button" onclick="location.reload()">Coba lagi</button>
+      <a href="/">Ke beranda</a>
+    </div>
+  </main>
+  <script>
+    // Data udara terakhir dari localStorage perangkat (tidak ada permintaan jaringan).
+    try {
+      var s = JSON.parse(localStorage.getItem("udaraku:udara-terakhir:v1"));
+      if (s && typeof s.pm25 === "number" && s.place && typeof s.place.name === "string" && s.updatedAt) {
+        var when;
+        try {
+          when = new Intl.DateTimeFormat("id-ID", {day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",
+            timeZone: s.timezone, timeZoneName:"short"}).format(new Date(s.updatedAt));
+        } catch (e) { when = new Date(s.updatedAt).toLocaleString("id-ID"); }
+        document.getElementById("pm").textContent = "PM2.5 " + s.pm25.toFixed(1).replace(".", ",") + " µg/m³";
+        document.getElementById("info").textContent = s.place.name + ". Data offline, terakhir diperbarui " + when + ".";
+        document.getElementById("kartu").hidden = false;
+      }
+    } catch (e) {}
+  </script>
+</body>
+</html>
